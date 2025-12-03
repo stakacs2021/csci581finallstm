@@ -19,10 +19,30 @@ echo "Start Time: $(date)"
 echo "=========================================="
 
 # Load necessary modules (adjust for your cluster)
-# Uncomment and modify based on your cluster's module system
-# module load python/3.12
-# module load cuda/11.8  # or appropriate CUDA version
-# module load cudnn/8.6  # if available
+# IMPORTANT: Uncomment and modify based on your cluster's module system
+# These are typically required for GPU access on HPC clusters
+
+# Option 1: If module system is available, use it:
+# module load cuda/11.8  # or cuda/12.0, cuda/12.1, etc.
+# module load cudnn/8.6  # or cudnn/8.9, etc.
+# module load python/3.12  # or python/3.11, etc.
+
+# Option 2: If module system NOT available, set CUDA paths manually:
+# Detect CUDA installation
+if [ -d "/usr/local/cuda" ]; then
+    export CUDA_HOME=/usr/local/cuda
+elif [ -d "/usr/local/cuda-11.8" ]; then
+    export CUDA_HOME=/usr/local/cuda-11.8
+elif [ -d "/usr/local/cuda-12.0" ]; then
+    export CUDA_HOME=/usr/local/cuda-12.0
+elif [ -d "/usr/local/cuda-12.1" ]; then
+    export CUDA_HOME=/usr/local/cuda-12.1
+fi
+
+# Set library path to ensure CUDA libraries are found
+if [ -n "$CUDA_HOME" ]; then
+    export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+fi
 
 # Activate virtual environment
 # Option 1: If you've created venv on the cluster
